@@ -8,18 +8,25 @@ LIBFLAGS = -lft
 CC = cc
 RM = rm -fr
 
-SRC = main.c
-OBJ = $(SRC:.c=.o)
+FILES = main.c
+
+SRC_DIR = src/
+OBJ_DIR = obj/
+SRC = $(addprefix $(SRC_DIR), $(FILES))
+OBJ = $(addprefix $(OBJ_DIR), $(FILES:.c=.o))
 
 all: $(NAME)
 
-%.o: %.c
+$(OBJ_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)
 
-$(NAME): $(OBJ) $(LIBFT)
+$(NAME): $(OBJ_DIR) $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -L $(LIBFT_DIR) $(LIBFLAGS)
 
 clean:
