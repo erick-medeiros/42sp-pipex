@@ -1,18 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   child_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/09 15:08:52 by eandre-f         ###   ########.fr       */
+/*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
+/*   Updated: 2022/08/11 17:43:13 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
+#include "pipex.h"
 
-int	main(void)
+static void	process_exit(t_pipex *pipex, int status)
 {
-	ft_printf("pipex\n");
+	free_pipex(pipex);
+	exit(status);
+}
+
+void	child_process(t_pipex *pipex, t_cmd *cmd)
+{
+	dup2(cmd->stdin, STDIN);
+	dup2(cmd->stdout, STDOUT);
+	close_pipes(pipex);
+	if (cmd->runpath == NULL)
+		process_exit(pipex, 1);
+	if (execve(cmd->runpath, cmd->args, cmd->envp) == -1)
+		process_exit(pipex, 1);
+	process_exit(pipex, 0);
 }

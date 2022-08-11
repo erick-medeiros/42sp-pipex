@@ -1,14 +1,18 @@
 NAME = pipex
-LIBFT = libft/libft.a
-LIBFT_DIR = libft/
 
+LIBFT_DIR = libft/
+LIBFT = libft/libft.a
+
+INC_DIR = include/
 CFLAGS = -Wall -Wextra -Werror
-CFLAGS += -I $(LIBFT_DIR) -g
+CFLAGS += -I $(LIBFT_DIR) -I $(INC_DIR) -g
 LIBFLAGS = -lft
 CC = cc
 RM = rm -fr
 
-FILES = main.c
+FILES = pipex.c
+FILES += child_process.c
+FILES += free.c
 
 SRC_DIR = src/
 OBJ_DIR = obj/
@@ -41,4 +45,13 @@ norm:
 	@clear
 	@norminette | grep Error || true
 
-.PHONY: all clean fclean re norm
+test: $(NAME)
+	./pipex test/assets/deepthought.txt grep\ Now /usr/bin/cat test/outs/test-30.txt
+
+leaks:
+	@clear
+	valgrind \
+	--leak-check=full \
+	./$(NAME) files/infile "cat" "wc -l" files/outfile
+
+.PHONY: all clean fclean re norm test leaks
