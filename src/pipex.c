@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/12 11:44:54 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/12 15:26:31 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp)
 	size_t	i;
 
 	cmd->envp = envp;
-	cmd->args = ft_split(argv_cmd, ' ');
+	cmd->args = ft_split_cmd(argv_cmd, ' ');
 	while (*envp != NULL && ft_strncmp("PATH", *envp, 4))
 		envp++;
 	if (!envp)
