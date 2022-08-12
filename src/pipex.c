@@ -6,13 +6,11 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/11 17:28:56 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/12 11:44:54 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-//./pipex file1 cmd1 cmd2 file2
 
 int	pipex_open(char *pathname, int mode)
 {
@@ -30,7 +28,7 @@ int	pipex_open(char *pathname, int mode)
 	return (fd);
 }
 
-char	*get_runpath(char **paths, char *cmd_exec)
+static char	*get_runpath(char **paths, char *cmd_exec)
 {
 	char	*tmp;
 	char	*runpath;
@@ -40,11 +38,13 @@ char	*get_runpath(char **paths, char *cmd_exec)
 		tmp = ft_strjoin(*paths, "/");
 		runpath = ft_strjoin(tmp, cmd_exec);
 		free(tmp);
-		if (access(runpath, 0) == 0)
+		if (access(runpath, F_OK | X_OK) == 0)
 			return (runpath);
 		free(runpath);
 		paths++;
 	}
+	if (access(cmd_exec, F_OK | X_OK) == 0)
+		return (ft_strdup(cmd_exec));
 	return (NULL);
 }
 
@@ -63,6 +63,8 @@ void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp)
 	{
 		paths = ft_split(*envp + 5, ':');
 		cmd->runpath = get_runpath(paths, cmd->args[0]);
+		if (!cmd->runpath)
+			cmd->status = 127;
 		i = -1;
 		while (paths[++i] != NULL)
 			free(paths[i]);
@@ -70,7 +72,7 @@ void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp)
 	}
 }
 
-int	pipex_tubing(t_pipex *pipex)
+void	pipex_tubing(t_pipex *pipex)
 {
 	if (pipe(pipex->pipefd) < 0)
 		error_exit(1, ERR_PIPE, NULL);
@@ -91,34 +93,9 @@ int	pipex_tubing(t_pipex *pipex)
 	close_pipes(pipex);
 	waitpid(pipex->pid1, &pipex->cmd1.status, 0);
 	waitpid(pipex->pid2, &pipex->cmd2.status, 0);
-	return (pipex->cmd2.status);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_pipex	pipex;
-
-	if (argc != 5)
-		error_exit(1, ERR_ARG, NULL);
-	else
-	{
-		pipex.infile = pipex_open(argv[1], IN_MODE);
-		if (pipex.infile < 0)
-			error_exit(1, ERR_INFILE, NULL);
-		pipex.outfile = pipex_open(argv[4], OUT_MODE);
-		if (pipex.outfile < 0)
-			error_exit(1, ERR_OUTFILE, NULL);
-		pipex_cmd(&pipex.cmd1, argv[2], envp);
-		if (!pipex.cmd1.runpath)
-			error(ERR_CMD, argv[2]);
-		pipex_cmd(&pipex.cmd2, argv[3], envp);
-		if (!pipex.cmd2.runpath)
-			error(ERR_CMD, argv[3]);
-		pipex_tubing(&pipex);
-		close(pipex.infile);
-		close(pipex.outfile);
-		free_pipex(&pipex);
-		exit(pipex.cmd2.status);
-	}
-	return (0);
+	if (macro_wifexited(pipex->cmd1.status))
+		pipex->cmd1.status = macro_wexitstatus(pipex->cmd1.status);
+	if (macro_wifexited(pipex->cmd2.status))
+		pipex->cmd2.status = macro_wexitstatus(pipex->cmd2.status);
+	pipex->exit_status = pipex->cmd2.status;
 }

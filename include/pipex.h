@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/11 16:57:23 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/12 11:27:25 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_pipex
 {
 	pid_t	pid1;
 	pid_t	pid2;
+	int		exit_status;
 	int		pipefd[2];
 	int		infile;
 	int		outfile;
@@ -58,11 +59,24 @@ typedef struct s_pipex
 	t_cmd	cmd2;
 }	t_pipex;
 
+// pipex {
+int		pipex_open(char *pathname, int mode);
+void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp);
+void	pipex_tubing(t_pipex *pipex);
+// } pipex
+
+// child_process {
+int		macro_wifexited(int status);
+int		macro_wexitstatus(int status);
+void	child_process(t_pipex *pipex, t_cmd *cmd);
+// } child_process
+
+// free {
 void	error(char *err, char *desc);
 void	error_exit(int status, char *err, char *desc);
 void	close_pipes(t_pipex *pipex);
 void	free_cmd(t_cmd *cmd);
 void	free_pipex(t_pipex *pipex);
-void	child_process(t_pipex *pipex, t_cmd *cmd);
+// } free
 
 #endif

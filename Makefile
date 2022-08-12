@@ -10,7 +10,8 @@ LIBFLAGS = -lft
 CC = cc
 RM = rm -fr
 
-FILES = pipex.c
+FILES = main.c
+FILES += pipex.c
 FILES += child_process.c
 FILES += free.c
 
@@ -46,9 +47,9 @@ norm:
 	@norminette | grep Error || true
 
 test: $(NAME)
-	./pipex test/assets/deepthought.txt grep\ Now /usr/bin/cat test/outs/test-30.txt
+	./$(NAME) files/infile "cat" "wc -l" files/outfile
 
-leaks:
+leaks: $(NAME)
 	@clear
 	valgrind \
 	--leak-check=full \
