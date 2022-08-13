@@ -6,25 +6,24 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/12 15:26:31 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/12 23:19:58 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	pipex_open(char *pathname, int mode)
+static int	pipex_open(char *pathname, int mode)
 {
 	int	fd;
+	int	permissions;
 
+	permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 	if (mode == IN_MODE)
-	{
 		fd = open(pathname, O_RDONLY);
-	}
+	else if (mode == OUT_MODE)
+		fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, permissions);
 	else
-	{
-		fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC,
-				S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
-	}
+		fd = open(pathname, O_WRONLY | O_CREAT | O_APPEND, permissions);
 	return (fd);
 }
 
@@ -48,27 +47,32 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 	return (NULL);
 }
 
-void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp)
+void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 {
-	char	**paths;
-	size_t	i;
-
-	cmd->envp = envp;
-	cmd->args = ft_split_cmd(argv_cmd, ' ');
+	pipex->envp = envp;
+	pipex->paths = NULL;
 	while (*envp != NULL && ft_strncmp("PATH", *envp, 4))
 		envp++;
-	if (!envp)
+	if (envp != NULL)
+		pipex->paths = ft_split(*envp + 5, ':');
+	pipex->infile = pipex_open(argv[1], IN_MODE);
+	if (pipex->infile < 0)
+		error(ERR_INFILE, NULL);
+	pipex->outfile = pipex_open(argv[argc - 1], OUT_MODE);
+	if (pipex->outfile < 0)
+		error(ERR_OUTFILE, NULL);
+}
+
+void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd)
+{
+	cmd->args = ft_split_cmd(argv_cmd, ' ');
+	if (pipex->paths == NULL)
 		cmd->runpath = ft_strdup(cmd->args[0]);
 	else
 	{
-		paths = ft_split(*envp + 5, ':');
-		cmd->runpath = get_runpath(paths, cmd->args[0]);
+		cmd->runpath = get_runpath(pipex->paths, cmd->args[0]);
 		if (!cmd->runpath)
 			cmd->status = 127;
-		i = -1;
-		while (paths[++i] != NULL)
-			free(paths[i]);
-		free(paths);
 	}
 }
 

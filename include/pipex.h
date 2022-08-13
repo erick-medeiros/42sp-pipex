@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/12 11:27:25 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/12 23:19:42 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@
 enum	e_mode
 {
 	IN_MODE,
-	OUT_MODE
+	OUT_MODE,
+	APPEND_MODE
 };
 
 typedef struct s_cmd
 {
 	char	*runpath;
 	char	**args;
-	char	**envp;
 	int		status;
 	int		stdin;
 	int		stdout;
@@ -51,6 +51,8 @@ typedef struct s_pipex
 {
 	pid_t	pid1;
 	pid_t	pid2;
+	char	**envp;
+	char	**paths;
 	int		exit_status;
 	int		pipefd[2];
 	int		infile;
@@ -60,8 +62,8 @@ typedef struct s_pipex
 }	t_pipex;
 
 // pipex {
-int		pipex_open(char *pathname, int mode);
-void	pipex_cmd(t_cmd *cmd, char *argv_cmd, char **envp);
+void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp);
+void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd);
 void	pipex_tubing(t_pipex *pipex);
 // } pipex
 
