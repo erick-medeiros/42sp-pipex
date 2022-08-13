@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 10:58:53 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/13 18:25:40 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static int	pipex_open(char *pathname, int mode)
 {
@@ -50,6 +50,7 @@ void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 
 	pipex->envp = envp;
 	pipex->paths = NULL;
+	pipex->cmd = NULL;
 	while (*envp != NULL && ft_strncmp("PATH", *envp, 4))
 		envp++;
 	if (envp != NULL)
@@ -66,6 +67,7 @@ void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 	pipex->outfile = pipex_open(argv[argc - 1], OUT_MODE);
 	if (pipex->outfile < 0)
 		error(ERR_OUTFILE, NULL);
+	pipex->exit_status = 0;
 }
 
 void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd)
@@ -83,28 +85,29 @@ void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd)
 
 void	pipex_tubing(t_pipex *pipex)
 {
-	if (pipe(pipex->pipefd) < 0)
-		error_exit(1, ERR_PIPE, NULL);
-	pipex->pid1 = fork();
-	if (pipex->pid1 == 0)
+	int	i;
+
+	if (pipe(pipex->pipefd1) < 0 || pipe(pipex->pipefd2) < 0)
+		free_error_exit(pipex, 1, ERR_PIPE, NULL);
+	i = -1;
+	pipex->pipe_number = 1;
+	while (++i < pipex->cmd_number)
 	{
-		pipex->cmd1.stdin = pipex->infile;
-		pipex->cmd1.stdout = pipex->pipefd[1];
-		child_process(pipex, &pipex->cmd1);
-	}
-	pipex->pid2 = fork();
-	if (pipex->pid2 == 0)
-	{
-		pipex->cmd2.stdin = pipex->pipefd[0];
-		pipex->cmd2.stdout = pipex->outfile;
-		child_process(pipex, &pipex->cmd2);
+		pipex->cmd[i]->pid = fork();
+		if (pipex->cmd[i]->pid == 0)
+		{
+			define_stds(pipex, i);
+			child_process(pipex, pipex->cmd[i]);
+		}
+		pipex->pipe_number *= -1;
 	}
 	close_pipes(pipex);
-	waitpid(pipex->pid1, &pipex->cmd1.status, 0);
-	waitpid(pipex->pid2, &pipex->cmd2.status, 0);
-	if (macro_wifexited(pipex->cmd1.status))
-		pipex->cmd1.status = macro_wexitstatus(pipex->cmd1.status);
-	if (macro_wifexited(pipex->cmd2.status))
-		pipex->cmd2.status = macro_wexitstatus(pipex->cmd2.status);
-	pipex->exit_status = pipex->cmd2.status;
+	i = -1;
+	while (++i < pipex->cmd_number)
+		waitpid(pipex->cmd[i]->pid, &pipex->cmd[i]->status, 0);
+	i = -1;
+	while (++i < pipex->cmd_number)
+		if (macro_wifexited(pipex->cmd[i]->status))
+			pipex->cmd[i]->status = macro_wexitstatus(pipex->cmd[i]->status);
+	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }

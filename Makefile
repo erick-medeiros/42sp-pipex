@@ -73,13 +73,17 @@ norm:
 external:
 	nm -un $(NAME) | grep -v w | grep -v __ | cut -d "@" -f1 | cut -c20-
 
-test: $(NAME)
-	./$(NAME) files/infile "cat" "wc -l" files/outfile
+test:
+	./pipex files/infile "cat" "wc -l" files/outfile
 
-leaks: $(NAME)
+test_bonus:
+	./pipex files/infile "cat" "grep Ubuntu" "wc -l" files/outfile
+
+leaks:
 	@clear
 	valgrind \
 	--leak-check=full \
-	./$(NAME) files/infile "cat" "wc -l" files/outfile
+	--show-leak-kinds=all \
+	./pipex files/infile "cat" "wc -l" files/outfile
 
 .PHONY: all clean fclean re bonus rebonus norm external test leaks
