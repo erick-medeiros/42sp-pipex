@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 18:02:13 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/14 00:39:14 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,18 @@ void	free_error_exit(t_pipex *pipex, int status, char *err, char *desc)
 
 void	close_pipes(t_pipex *pipex)
 {
-	close(pipex->pipefd1[0]);
-	close(pipex->pipefd1[1]);
-	close(pipex->pipefd2[0]);
-	close(pipex->pipefd2[1]);
+	int	i;
+
+	if (pipex->pipefds != NULL)
+	{
+		i = 0;
+		while (pipex->pipefds[i] != NULL)
+		{
+			close(pipex->pipefds[i][0]);
+			close(pipex->pipefds[i][1]);
+			++i;
+		}
+	}
 }
 
 void	free_cmd(t_cmd *cmd)
@@ -67,11 +75,14 @@ void	free_pipex(t_pipex *pipex)
 		free(pipex->cmd[i]);
 		free(pipex->cmd);
 	}
+	if (pipex->pipefds != NULL)
+	{
+		ft_free_list((void **)pipex->pipefds);
+		free(pipex->pipefds);
+	}
 	if (pipex->paths != NULL)
 	{
-		i = -1;
-		while (pipex->paths[++i] != NULL)
-			free(pipex->paths[i]);
+		ft_free_list((void **)pipex->paths);
 		free(pipex->paths);
 	}
 	close(pipex->infile);

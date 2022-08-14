@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 21:46:03 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/14 00:40:28 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,14 @@ int	main(int argc, char **argv, char **envp)
 	{
 		pipex_init(&pipex, argc, argv, envp);
 		config_commands(&pipex, argc, argv);
+		pipex.pipefds = ft_calloc(sizeof(int *), pipex.cmd_number);
+		pipex.i = -1;
+		while (++pipex.i < pipex.cmd_number - 1)
+		{
+			pipex.pipefds[pipex.i] = malloc(sizeof(int) * 2);
+			if (pipe(pipex.pipefds[pipex.i]) < 0)
+				free_error_exit(&pipex, 1, ERR_PIPE, NULL);
+		}
 		pipex_tubing(&pipex);
 		free_pipex(&pipex);
 		exit(pipex.exit_status);

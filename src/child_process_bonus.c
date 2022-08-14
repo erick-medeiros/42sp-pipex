@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 20:41:26 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/13 23:55:30 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,21 @@ void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
 
 void	define_stds(t_pipex *pipex, int i)
 {
-	if (pipex->pipe_number == 1)
+	if (i == 0)
 	{
-		pipex->cmd[i]->stdin = pipex->pipefd1[0];
-		pipex->cmd[i]->stdout = pipex->pipefd2[1];
+		pipex->cmd[i]->stdin = pipex->infile;
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
+	}
+	else if (i == (pipex->cmd_number - 1))
+	{
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->outfile;
 	}
 	else
 	{
-		pipex->cmd[i]->stdin = pipex->pipefd2[0];
-		pipex->cmd[i]->stdout = pipex->pipefd1[1];
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
 	}
-	if (i == 0)
-		pipex->cmd[i]->stdin = pipex->infile;
-	else if (i == (pipex->cmd_number - 1))
-		pipex->cmd[i]->stdout = pipex->outfile;
 }
 
 void	child_process(t_pipex *pipex, t_cmd *cmd)

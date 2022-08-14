@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 20:30:35 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/14 00:40:09 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,13 @@ typedef struct s_pipex
 	char	**envp;
 	char	**paths;
 	int		exit_status;
-	int		pipefd1[2];
-	int		pipefd2[2];
+	int		**pipefds;
 	int		pipe_number;
 	int		infile;
 	int		outfile;
 	int		here_doc;
 	int		cmd_number;
+	int		i;
 	t_cmd	**cmd;
 }	t_pipex;
 
