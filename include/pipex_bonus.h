@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/14 00:40:09 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/14 18:30:11 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ int		pipex_here_doc(t_pipex *pipex, char	*limiter);
 // } pipex
 
 // child_process {
-int		macro_wifexited(int status);
-int		macro_wexitstatus(int status);
 void	define_stds(t_pipex *pipex, int i);
 void	child_process(t_pipex *pipex, t_cmd *cmd);
 void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter);

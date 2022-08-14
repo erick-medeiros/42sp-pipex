@@ -6,27 +6,13 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/14 00:40:28 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/14 18:28:30 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
 //./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
-
-// WIFEXITED
-
-int	macro_wifexited(int status)
-{
-	return (((status) & 0xff) == 0);
-}
-
-// WEXITSTATUS
-
-int	macro_wexitstatus(int status)
-{
-	return (((status) >> 8) & 0xff);
-}
 
 static void	config_commands(t_pipex *pipex, int argc, char **argv)
 {
@@ -77,12 +63,21 @@ int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 	return (STDIN);
 }
 
+static int	check_args(t_pipex *pipex, int argc, char **argv)
+{
+	if (argc < 5)
+		return (1);
+	pipex->here_doc = ft_strncmp(argv[1], "here_doc", 8);
+	if ((pipex->here_doc == 0 && argc < 6))
+		return (1);
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 
-	pipex.here_doc = ft_strncmp(argv[1], "here_doc", 8);
-	if (argc < 5 || (pipex.here_doc == 0 && argc < 6))
+	if (check_args(&pipex, argc, argv) == 1)
 	{
 		error(ERR_ARG, NULL);
 		exit(1);
