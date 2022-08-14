@@ -6,30 +6,37 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 18:25:14 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/13 20:41:26 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-// WIFEXITED
-
-int	macro_wifexited(int status)
-{
-	return (((status) & 0xff) == 0);
-}
-
-// WEXITSTATUS
-
-int	macro_wexitstatus(int status)
-{
-	return (((status) >> 8) & 0xff);
-}
-
 static void	process_exit(t_pipex *pipex, int status)
 {
 	free_pipex(pipex);
 	exit(status);
+}
+
+void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
+{
+	char	*line;
+
+	write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
+	line = get_next_line(STDIN);
+	while (line)
+	{
+		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+			break ;
+		write(fd[1], line, ft_strlen(line));
+		free(line);
+		write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
+		line = get_next_line(STDIN);
+	}
+	free(line);
+	close(fd[1]);
+	free_pipex(pipex);
+	exit(0);
 }
 
 void	define_stds(t_pipex *pipex, int i)

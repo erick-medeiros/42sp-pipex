@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/13 18:25:05 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/13 20:30:35 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # define ERR_FORK "error on fork"
 # define ERR_CMD "command not found"
 # define ERR_MEM "memory allocation error"
+# define MSG_HERE_DOC	"pipex: here_doc> "
 
 enum	e_mode
 {
@@ -59,6 +60,7 @@ typedef struct s_pipex
 	int		pipe_number;
 	int		infile;
 	int		outfile;
+	int		here_doc;
 	int		cmd_number;
 	t_cmd	**cmd;
 }	t_pipex;
@@ -67,6 +69,7 @@ typedef struct s_pipex
 void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp);
 void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd);
 void	pipex_tubing(t_pipex *pipex);
+int		pipex_here_doc(t_pipex *pipex, char	*limiter);
 // } pipex
 
 // child_process {
@@ -74,6 +77,7 @@ int		macro_wifexited(int status);
 int		macro_wexitstatus(int status);
 void	define_stds(t_pipex *pipex, int i);
 void	child_process(t_pipex *pipex, t_cmd *cmd);
+void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter);
 // } child_process
 
 // free {
