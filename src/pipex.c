@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 14:08:57 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:46:35 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 {
 	char	*runpath;
 
+	if (paths == NULL)
+		return (ft_strdup(cmd_exec));
 	while (*paths)
 	{
 		runpath = ft_strjoin(*paths, cmd_exec);
@@ -61,15 +63,54 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 	return (NULL);
 }
 
-void	pipex_cmd(t_pipex *pipex, t_cmd *cmd, char *argv_cmd)
+void	pipex_commands(t_pipex *pipex, int argc, char **argv)
 {
-	cmd->args = ft_split_cmd(argv_cmd, ' ');
-	if (pipex->paths == NULL)
-		cmd->runpath = ft_strdup(cmd->args[0]);
-	else
+	int	i;
+	int	start;
+
+	start = 2;
+	if (pipex->here_doc == 0)
+		start = 3;
+	pipex->cmd_number = argc - start - 1;
+	pipex->cmd = malloc(sizeof(t_cmd *) * (pipex->cmd_number + 1));
+	if (pipex->cmd == NULL)
+		free_error_exit(pipex, 1, ERR_MEM, NULL);
+	i = -1;
+	while (++i < pipex->cmd_number)
 	{
-		cmd->runpath = get_runpath(pipex->paths, cmd->args[0]);
-		if (!cmd->runpath)
-			cmd->status = 127;
+		pipex->cmd[i] = malloc(sizeof(t_cmd));
+		if (pipex->cmd[i] == NULL)
+			free_error_exit(pipex, 1, ERR_MEM, NULL);
+		pipex->cmd[i]->args = ft_split_cmd(argv[i + start], ' ');
+		pipex->cmd[i]->runpath = get_runpath(pipex->paths,
+				pipex->cmd[i]->args[0]);
+		if (!pipex->cmd[i]->runpath)
+			pipex->cmd[i]->status = 127;
+		if (!pipex->cmd[i]->runpath)
+			error(ERR_CMD, argv[i + start]);
 	}
+	pipex->cmd[i] = NULL;
+}
+
+void	pipex_tubing(t_pipex *pipex)
+{
+	int	i;
+
+	i = -1;
+	while (++i < pipex->cmd_number)
+	{
+		pipex->cmd[i]->pid = fork();
+		define_stds(pipex, i);
+		if (pipex->cmd[i]->pid == 0)
+			child_process(pipex, pipex->cmd[i]);
+	}
+	close_pipes(pipex);
+	i = -1;
+	while (++i < pipex->cmd_number)
+	{
+		waitpid(pipex->cmd[i]->pid, &pipex->cmd[i]->status, 0);
+		if (WIFEXITED(pipex->cmd[i]->status))
+			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
+	}
+	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }

@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 14:29:51 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:36:55 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 {
 	get_paths(pipex, envp);
+	pipex->here_doc = -1;
 	pipex->envp = envp;
 	pipex->infile = pipex_open(argv[1], IN_MODE);
 	if (pipex->infile < 0)
@@ -24,30 +25,21 @@ void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 		error(ERR_OUTFILE, NULL);
 }
 
-void	pipex_tubing(t_pipex *pipex)
+void	define_stds(t_pipex *pipex, int i)
 {
-	if (pipe(pipex->pipefd) < 0)
-		error_exit(1, ERR_PIPE, NULL);
-	pipex->pid1 = fork();
-	if (pipex->pid1 == 0)
+	if (i == 0)
 	{
-		pipex->cmd1.stdin = pipex->infile;
-		pipex->cmd1.stdout = pipex->pipefd[1];
-		child_process(pipex, &pipex->cmd1);
+		pipex->cmd[i]->stdin = pipex->infile;
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
 	}
-	pipex->pid2 = fork();
-	if (pipex->pid2 == 0)
+	else if (i == (pipex->cmd_number - 1))
 	{
-		pipex->cmd2.stdin = pipex->pipefd[0];
-		pipex->cmd2.stdout = pipex->outfile;
-		child_process(pipex, &pipex->cmd2);
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->outfile;
 	}
-	close_pipes(pipex);
-	waitpid(pipex->pid1, &pipex->cmd1.status, 0);
-	waitpid(pipex->pid2, &pipex->cmd2.status, 0);
-	if (WIFEXITED(pipex->cmd1.status))
-		pipex->cmd1.status = WEXITSTATUS(pipex->cmd1.status);
-	if (WIFEXITED(pipex->cmd2.status))
-		pipex->cmd2.status = WEXITSTATUS(pipex->cmd2.status);
-	pipex->exit_status = pipex->cmd2.status;
+	else
+	{
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
+	}
 }

@@ -6,38 +6,13 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/14 18:28:30 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:54:42 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
+#include "pipex.h"
 
 //./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
-
-static void	config_commands(t_pipex *pipex, int argc, char **argv)
-{
-	int	i;
-	int	start;
-
-	if (pipex->here_doc == 0)
-		start = 3;
-	else
-		start = 2;
-	pipex->cmd_number = argc - start - 1;
-	pipex->cmd = malloc(sizeof(t_cmd *) * (pipex->cmd_number + 1));
-	if (pipex->cmd == NULL)
-		free_error_exit(pipex, 1, ERR_MEM, NULL);
-	i = 0;
-	while (i < pipex->cmd_number)
-	{
-		pipex->cmd[i] = malloc(sizeof(t_cmd));
-		pipex_cmd(pipex, pipex->cmd[i], argv[i + start]);
-		if (!pipex->cmd[i])
-			error(ERR_CMD, argv[i + start]);
-		++i;
-	}
-	pipex->cmd[i] = NULL;
-}
 
 int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 {
@@ -85,7 +60,7 @@ int	main(int argc, char **argv, char **envp)
 	else
 	{
 		pipex_init(&pipex, argc, argv, envp);
-		config_commands(&pipex, argc, argv);
+		pipex_commands(&pipex, argc, argv);
 		pipex.pipefds = ft_calloc(sizeof(int *), pipex.cmd_number);
 		pipex.i = -1;
 		while (++pipex.i < pipex.cmd_number - 1)

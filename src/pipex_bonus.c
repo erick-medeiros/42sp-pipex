@@ -6,11 +6,11 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 14:38:47 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:54:47 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
+#include "pipex.h"
 
 void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 {
@@ -33,29 +33,6 @@ void	pipex_init(t_pipex *pipex, int argc, char **argv, char **envp)
 	if (pipex->outfile < 0)
 		error(ERR_OUTFILE, NULL);
 	pipex->exit_status = 0;
-}
-
-void	pipex_tubing(t_pipex *pipex)
-{
-	int	i;
-
-	i = -1;
-	while (++i < pipex->cmd_number)
-	{
-		pipex->cmd[i]->pid = fork();
-		define_stds(pipex, i);
-		if (pipex->cmd[i]->pid == 0)
-			child_process(pipex, pipex->cmd[i]);
-	}
-	close_pipes(pipex);
-	i = -1;
-	while (++i < pipex->cmd_number)
-	{
-		waitpid(pipex->cmd[i]->pid, &pipex->cmd[i]->status, 0);
-		if (WIFEXITED(pipex->cmd[i]->status))
-			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
-	}
-	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }
 
 void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)

@@ -31,7 +31,7 @@ FILES_BONUS = main_bonus.c
 FILES_BONUS += pipex.c
 FILES_BONUS += pipex_bonus.c
 FILES_BONUS += child_process.c
-FILES_BONUS += free_bonus.c
+FILES_BONUS += free.c
 
 SRC_BONUS = $(addprefix $(SRC_DIR), $(FILES_BONUS))
 OBJ_BONUS = $(addprefix $(OBJ_DIR), $(FILES_BONUS:.c=.o))
