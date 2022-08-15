@@ -20,6 +20,7 @@ BIN_BONUS = $(BIN_MAND)_bonus
 
 FILES = main.c
 FILES += pipex.c
+FILES += pipex_utils.c
 FILES += child_process.c
 FILES += free.c
 
@@ -27,6 +28,7 @@ SRC = $(addprefix $(SRC_DIR), $(FILES))
 OBJ = $(addprefix $(OBJ_DIR), $(FILES:.c=.o))
 
 FILES_BONUS = main_bonus.c
+FILES_BONUS += pipex.c
 FILES_BONUS += pipex_bonus.c
 FILES_BONUS += child_process_bonus.c
 FILES_BONUS += free_bonus.c
