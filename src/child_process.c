@@ -6,25 +6,11 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/12 23:01:42 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 14:30:06 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-// WIFEXITED
-
-int	macro_wifexited(int status)
-{
-	return (((status) & 0xff) == 0);
-}
-
-// WEXITSTATUS
-
-int	macro_wexitstatus(int status)
-{
-	return (((status) >> 8) & 0xff);
-}
 
 static void	process_exit(t_pipex *pipex, int status)
 {
