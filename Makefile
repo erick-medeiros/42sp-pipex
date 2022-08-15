@@ -30,7 +30,7 @@ OBJ = $(addprefix $(OBJ_DIR), $(FILES:.c=.o))
 FILES_BONUS = main_bonus.c
 FILES_BONUS += pipex.c
 FILES_BONUS += pipex_bonus.c
-FILES_BONUS += child_process_bonus.c
+FILES_BONUS += child_process.c
 FILES_BONUS += free_bonus.c
 
 SRC_BONUS = $(addprefix $(SRC_DIR), $(FILES_BONUS))

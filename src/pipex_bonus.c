@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 15:08:22 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 14:09:53 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 14:38:47 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,44 @@ void	pipex_tubing(t_pipex *pipex)
 			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
 	}
 	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
+}
+
+void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
+{
+	char	*line;
+
+	write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
+	line = get_next_line(STDIN);
+	while (line)
+	{
+		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+			break ;
+		write(fd[1], line, ft_strlen(line));
+		free(line);
+		write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
+		line = get_next_line(STDIN);
+	}
+	free(line);
+	close(fd[1]);
+	free_pipex(pipex);
+	exit(0);
+}
+
+void	define_stds(t_pipex *pipex, int i)
+{
+	if (i == 0)
+	{
+		pipex->cmd[i]->stdin = pipex->infile;
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
+	}
+	else if (i == (pipex->cmd_number - 1))
+	{
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->outfile;
+	}
+	else
+	{
+		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
+		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
+	}
 }
