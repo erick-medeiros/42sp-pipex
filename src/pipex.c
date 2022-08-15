@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 15:46:35 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/15 18:14:11 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,14 @@ int	pipex_open(char *pathname, int mode)
 	return (fd);
 }
 
-void	get_paths(t_pipex *pipex, char **envp)
+void	pipex_init(t_pipex *pipex, char **envp)
 {
 	size_t	i;
 
+	pipex->envp = envp;
+	pipex->pipefds = NULL;
+	pipex->cmd = NULL;
+	pipex->exit_status = 0;
 	pipex->paths = NULL;
 	while (*envp != NULL && ft_strncmp("PATH", *envp, 4))
 		envp++;
