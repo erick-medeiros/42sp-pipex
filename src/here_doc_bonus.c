@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 10:46:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 11:16:22 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 12:06:37 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
 {
 	char	*line;
+	int		cmplen;
 
 	write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
 	line = get_next_line(STDIN);
 	while (line)
 	{
-		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+		cmplen = ft_max(ft_strlen(limiter), ft_strlen(line) - 1);
+		if (ft_strncmp(limiter, line, cmplen) == 0)
 			break ;
 		write(fd[1], line, ft_strlen(line));
 		free(line);

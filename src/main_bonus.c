@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 11:15:30 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 11:47:39 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	main(int argc, char **argv, char **envp)
 
 	if (argc < 5)
 		free_error_exit(&pipex, 1, ERR_ARG, NULL);
-	pipex.here_doc = ft_strncmp(argv[1], "here_doc", 8);
+	pipex.here_doc = ft_strcmp(argv[1], "here_doc");
 	if (argc < 6 && pipex.here_doc == 0)
 		free_error_exit(&pipex, 1, ERR_ARG, NULL);
 	pipex_io(&pipex, argc, argv);
