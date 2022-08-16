@@ -6,42 +6,47 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 10:46:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 18:33:33 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 20:38:07 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include "pipex_bonus.h"
 
+static void	child_here_doc(int pipefd[2], char	*limiter);
+
 int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 {
 	int	pipefd[2];
 	int	pid;
+	int	fd;
 
 	if (pipe(pipefd) < 0)
-		error_exit(pipex, 1, ERR_PIPE);
+		error_exit(pipex, 1, MSG_HERE_DOC);
 	pid = fork();
 	if (pid < 0)
-		error_exit(pipex, 1, ERR_PIPE);
+		error_exit(pipex, 1, MSG_HERE_DOC);
 	if (pid == 0)
+		child_here_doc(pipefd, limiter);
+	else
 	{
-		pipex->infile = STDIN;
-		pipex->outfile = STDOUT;
+		waitpid(pid, NULL, 0);
+		fd = pipex_open(PATH_TEMP_FILE, TEMP_MODE);
+		if (fd < 0)
+			error_exit(pipex, 1, MSG_HERE_DOC);
+		dup2(pipefd[0], fd);
 		close(pipefd[0]);
-		child_here_doc(pipex, pipefd, limiter);
+		close(pipefd[1]);
 	}
-	waitpid(pid, NULL, 0);
-	dup2(pipefd[0], STDIN);
-	close(pipefd[0]);
-	close(pipefd[1]);
-	return (STDIN);
+	return (fd);
 }
 
-void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
+static void	child_here_doc(int pipefd[2], char	*limiter)
 {
 	char	*line;
 	int		cmplen;
 
+	close(pipefd[0]);
 	write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
 	line = get_next_line(STDIN);
 	while (line)
@@ -49,13 +54,12 @@ void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter)
 		cmplen = ft_max(ft_strlen(limiter), ft_strlen(line) - 1);
 		if (ft_strncmp(limiter, line, cmplen) == 0)
 			break ;
-		write(fd[1], line, ft_strlen(line));
+		write(pipefd[1], line, ft_strlen(line));
 		free(line);
 		write(STDIN, MSG_HERE_DOC, ft_strlen(MSG_HERE_DOC));
 		line = get_next_line(STDIN);
 	}
 	free(line);
-	close(fd[1]);
-	free_pipex(pipex);
+	close(pipefd[1]);
 	exit(0);
 }
