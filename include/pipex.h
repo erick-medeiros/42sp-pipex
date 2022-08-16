@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 10:10:27 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 10:54:21 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 # define ERR_FORK "error on fork"
 # define ERR_CMD "command not found"
 # define ERR_MEM "memory allocation error"
-# define MSG_HERE_DOC	"pipex: here_doc> "
 
 enum	e_mode
 {
@@ -85,10 +84,5 @@ void	close_pipes(t_pipex *pipex);
 void	free_cmd(t_cmd *cmd);
 void	free_pipex(t_pipex *pipex);
 // } free
-
-// bonus {
-int		pipex_here_doc(t_pipex *pipex, char	*limiter);
-void	child_here_doc(t_pipex *pipex, int fd[2], char	*limiter);
-// } bonus
 
 #endif
