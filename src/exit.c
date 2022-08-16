@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 15:54:37 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 14:38:35 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,20 +44,8 @@ void	close_pipes(t_pipex *pipex)
 			++i;
 		}
 	}
-}
-
-void	free_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	i = -1;
-	if (cmd->args != NULL)
-	{
-		while (cmd->args[++i] != NULL)
-			free(cmd->args[i]);
-		free(cmd->args);
-	}
-	free(cmd->runpath);
+	close(pipex->infile);
+	close(pipex->outfile);
 }
 
 void	free_pipex(t_pipex *pipex)
@@ -69,22 +57,13 @@ void	free_pipex(t_pipex *pipex)
 		i = -1;
 		while (pipex->cmd[++i] != NULL)
 		{
-			free_cmd(pipex->cmd[i]);
+			if (pipex->cmd[i]->args != NULL)
+				ft_free_list((void ***)&pipex->cmd[i]->args);
+			free(pipex->cmd[i]->runpath);
 			free(pipex->cmd[i]);
 		}
-		free(pipex->cmd[i]);
 		free(pipex->cmd);
 	}
-	if (pipex->pipefds != NULL)
-	{
-		ft_free_list((void **)pipex->pipefds);
-		free(pipex->pipefds);
-	}
-	if (pipex->paths != NULL)
-	{
-		ft_free_list((void **)pipex->paths);
-		free(pipex->paths);
-	}
-	close(pipex->infile);
-	close(pipex->outfile);
+	ft_free_list((void ***)&pipex->pipefds);
+	ft_free_list((void ***)&pipex->paths);
 }
