@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 19:05:35 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 20:03:16 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,6 @@ void	free_pipex(t_pipex *pipex)
 	}
 	ft_free_list((void ***)&pipex->pipefds);
 	ft_free_list((void ***)&pipex->paths);
+	if (access(PATH_TEMP_FILE, F_OK) == 0)
+		unlink(PATH_TEMP_FILE);
 }

@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 18:45:37 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 19:46:17 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ int	pipex_open(char *pathname, int mode)
 		fd = open(pathname, O_RDONLY);
 	else if (mode == OUT_MODE)
 		fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, permissions);
-	else
+	else if (mode == APPEND_MODE)
 		fd = open(pathname, O_WRONLY | O_CREAT | O_APPEND, permissions);
+	else
+		fd = open(pathname, O_RDWR | O_WRONLY | O_CREAT | O_TRUNC, permissions);
 	return (fd);
 }
 

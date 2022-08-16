@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 19:01:28 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 19:53:32 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,14 @@
 # define ERR_FORK "error on fork"
 # define ERR_CMD "command not found"
 # define ERR_MEM "memory allocation error"
+# define PATH_TEMP_FILE "./.tempfilepipex"
 
 enum	e_mode
 {
 	IN_MODE,
 	OUT_MODE,
-	APPEND_MODE
+	APPEND_MODE,
+	TEMP_MODE
 };
 
 typedef struct s_cmd
