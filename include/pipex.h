@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 14:38:30 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 16:10:17 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@
 # include <libft.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <errno.h>
 # include <sys/wait.h>
 
 # define STDIN	0
