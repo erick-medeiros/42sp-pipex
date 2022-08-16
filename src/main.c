@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 10:56:34 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 11:06:53 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 
 	if (argc != 5)
-		free_error_exit(&pipex, 1, ERR_PIPE, NULL);
+		free_error_exit(&pipex, 1, ERR_ARG, NULL);
 	else
 	{
 		pipex.here_doc = -1;
