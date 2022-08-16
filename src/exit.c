@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 14:38:35 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 14:56:27 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ void	close_pipes(t_pipex *pipex)
 			++i;
 		}
 	}
-	close(pipex->infile);
-	close(pipex->outfile);
+	if (pipex->infile >= 0)
+		close(pipex->infile);
+	if (pipex->outfile >= 0)
+		close(pipex->outfile);
 }
 
 void	free_pipex(t_pipex *pipex)
