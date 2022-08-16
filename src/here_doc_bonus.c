@@ -6,22 +6,12 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 10:46:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 10:53:40 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 11:16:22 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include "pipex_bonus.h"
-
-int	check_args(t_pipex *pipex, int argc, char **argv)
-{
-	if (argc < 5)
-		return (1);
-	pipex->here_doc = ft_strncmp(argv[1], "here_doc", 8);
-	if ((pipex->here_doc == 0 && argc < 6))
-		return (1);
-	return (0);
-}
 
 int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 {
