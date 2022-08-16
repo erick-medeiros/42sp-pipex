@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 18:14:30 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 10:10:27 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ typedef struct s_pipex
 	int		infile;
 	int		outfile;
 	int		here_doc;
+	int		cmd_start;
 	int		cmd_number;
-	int		i;
 	t_cmd	**cmd;
 }	t_pipex;
 
@@ -69,7 +69,7 @@ typedef struct s_pipex
 int		pipex_open(char *pathname, int mode);
 void	pipex_init(t_pipex *pipex, char **envp);
 void	pipex_io(t_pipex *pipex, int argc, char **argv);
-void	pipex_commands(t_pipex *pipex, int argc, char **argv);
+void	pipex_commands(t_pipex *pipex, char **argv);
 void	pipex_tubing(t_pipex *pipex);
 // } pipex
 

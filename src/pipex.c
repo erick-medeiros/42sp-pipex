@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/15 18:14:11 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 10:29:56 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	pipex_open(char *pathname, int mode)
 
 void	pipex_init(t_pipex *pipex, char **envp)
 {
-	size_t	i;
+	int	i;
 
 	pipex->envp = envp;
 	pipex->pipefds = NULL;
@@ -40,11 +40,19 @@ void	pipex_init(t_pipex *pipex, char **envp)
 		envp++;
 	if (envp != NULL)
 		pipex->paths = ft_split(*envp + 5, ':');
+	i = -1;
 	if (pipex->paths != NULL)
-	{
-		i = -1;
 		while (pipex->paths[++i] != NULL)
 			ft_strupd(&pipex->paths[i], ft_strjoin(pipex->paths[i], "/"));
+	pipex->pipefds = ft_calloc(sizeof(int *), pipex->cmd_number);
+	if (pipex->pipefds == NULL)
+		free_error_exit(pipex, 1, ERR_MEM, NULL);
+	i = -1;
+	while (++i < pipex->cmd_number - 1)
+	{
+		pipex->pipefds[i] = malloc(sizeof(int) * 2);
+		if (pipex->pipefds[i] == NULL)
+			free_error_exit(pipex, 1, ERR_MEM, NULL);
 	}
 }
 
@@ -67,15 +75,10 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 	return (NULL);
 }
 
-void	pipex_commands(t_pipex *pipex, int argc, char **argv)
+void	pipex_commands(t_pipex *pipex, char **argv)
 {
 	int	i;
-	int	start;
 
-	start = 2;
-	if (pipex->here_doc == 0)
-		start = 3;
-	pipex->cmd_number = argc - start - 1;
 	pipex->cmd = malloc(sizeof(t_cmd *) * (pipex->cmd_number + 1));
 	if (pipex->cmd == NULL)
 		free_error_exit(pipex, 1, ERR_MEM, NULL);
@@ -85,13 +88,13 @@ void	pipex_commands(t_pipex *pipex, int argc, char **argv)
 		pipex->cmd[i] = malloc(sizeof(t_cmd));
 		if (pipex->cmd[i] == NULL)
 			free_error_exit(pipex, 1, ERR_MEM, NULL);
-		pipex->cmd[i]->args = ft_split_cmd(argv[i + start], ' ');
+		pipex->cmd[i]->args = ft_split_cmd(argv[pipex->cmd_start + i], ' ');
 		pipex->cmd[i]->runpath = get_runpath(pipex->paths,
 				pipex->cmd[i]->args[0]);
 		if (!pipex->cmd[i]->runpath)
 			pipex->cmd[i]->status = 127;
 		if (!pipex->cmd[i]->runpath)
-			error(ERR_CMD, argv[i + start]);
+			error(ERR_CMD, argv[pipex->cmd_start + i]);
 	}
 	pipex->cmd[i] = NULL;
 }
@@ -100,6 +103,10 @@ void	pipex_tubing(t_pipex *pipex)
 {
 	int	i;
 
+	i = -1;
+	while (++i < pipex->cmd_number - 1)
+		if (pipe(pipex->pipefds[i]) < 0)
+			free_error_exit(pipex, 1, ERR_PIPE, NULL);
 	i = -1;
 	while (++i < pipex->cmd_number)
 	{
