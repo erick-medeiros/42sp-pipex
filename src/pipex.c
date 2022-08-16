@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 17:27:55 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 18:18:33 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	pipex_open(char *pathname, int mode)
 	int	fd;
 	int	permissions;
 
-	permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+	permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 	if (mode == IN_MODE)
 		fd = open(pathname, O_RDONLY);
 	else if (mode == OUT_MODE)
