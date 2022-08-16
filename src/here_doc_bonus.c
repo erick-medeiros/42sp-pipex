@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 10:46:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 12:06:37 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 18:33:33 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 	int	pid;
 
 	if (pipe(pipefd) < 0)
-		free_error_exit(pipex, 1, ERR_PIPE, NULL);
+		error_exit(pipex, 1, ERR_PIPE);
 	pid = fork();
 	if (pid < 0)
-		free_error_exit(pipex, 1, ERR_PIPE, NULL);
+		error_exit(pipex, 1, ERR_PIPE);
 	if (pid == 0)
 	{
 		pipex->infile = STDIN;

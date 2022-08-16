@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 16:10:17 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 19:01:28 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ enum	e_mode
 typedef struct s_cmd
 {
 	pid_t	pid;
+	char	*desc;
 	char	*runpath;
 	char	**args;
 	int		status;
@@ -80,8 +81,8 @@ void	child_process(t_pipex *pipex, t_cmd *cmd);
 // } child_process
 
 // free {
-void	error(char *err, char *desc);
-void	free_error_exit(t_pipex *pipex, int status, char *err, char *desc);
+void	child_error(t_cmd *cmd);
+void	error_exit(t_pipex *pipex, int status, char *msg_err);
 void	close_pipes(t_pipex *pipex);
 void	free_pipex(t_pipex *pipex);
 // } free

@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 11:47:39 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 18:33:39 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 
 	if (argc < 5)
-		free_error_exit(&pipex, 1, ERR_ARG, NULL);
+		error_exit(&pipex, 1, ERR_ARG);
 	pipex.here_doc = ft_strcmp(argv[1], "here_doc");
 	if (argc < 6 && pipex.here_doc == 0)
-		free_error_exit(&pipex, 1, ERR_ARG, NULL);
+		error_exit(&pipex, 1, ERR_ARG);
 	pipex_io(&pipex, argc, argv);
 	pipex_init(&pipex, envp);
 	pipex_commands(&pipex, argv);
@@ -39,17 +39,21 @@ void	pipex_io(t_pipex *pipex, int argc, char **argv)
 	{
 		pipex->cmd_start = 3;
 		pipex->infile = pipex_here_doc(pipex, argv[2]);
+		if (pipex->infile < 0)
+			perror(ERR_HERE_DOC);
 		pipex->outfile = pipex_open(argv[argc - 1], APPEND_MODE);
+		if (pipex->outfile < 0)
+			perror(argv[argc - 1]);
 	}
 	else
 	{
 		pipex->cmd_start = 2;
 		pipex->infile = pipex_open(argv[1], IN_MODE);
+		if (pipex->infile < 0)
+			perror(argv[1]);
 		pipex->outfile = pipex_open(argv[argc - 1], OUT_MODE);
+		if (pipex->outfile < 0)
+			perror(argv[argc - 1]);
 	}
-	if (pipex->infile < 0)
-		error(ERR_INFILE, NULL);
-	if (pipex->outfile < 0)
-		error(ERR_OUTFILE, NULL);
 	pipex->cmd_number = argc - pipex->cmd_start - 1;
 }

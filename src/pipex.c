@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 18:18:33 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 18:45:37 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ void	pipex_init(t_pipex *pipex, char **envp)
 			ft_strupd(&pipex->paths[i], ft_strjoin(pipex->paths[i], "/"));
 	pipex->pipefds = ft_calloc(sizeof(int *), pipex->cmd_number);
 	if (pipex->pipefds == NULL)
-		free_error_exit(pipex, 1, ERR_MEM, NULL);
+		error_exit(pipex, 1, ERR_MEM);
 	i = -1;
 	while (++i < pipex->cmd_number - 1)
 	{
 		pipex->pipefds[i] = malloc(sizeof(int) * 2);
 		if (pipex->pipefds[i] == NULL)
-			free_error_exit(pipex, 1, ERR_MEM, NULL);
+			error_exit(pipex, 1, ERR_MEM);
 	}
 }
 
@@ -85,20 +85,19 @@ void	pipex_commands(t_pipex *pipex, char **argv)
 
 	pipex->cmd = malloc(sizeof(t_cmd *) * (pipex->cmd_number + 1));
 	if (pipex->cmd == NULL)
-		free_error_exit(pipex, 1, ERR_MEM, NULL);
+		error_exit(pipex, 1, ERR_MEM);
 	i = -1;
 	while (++i < pipex->cmd_number)
 	{
 		pipex->cmd[i] = malloc(sizeof(t_cmd));
 		if (pipex->cmd[i] == NULL)
-			free_error_exit(pipex, 1, ERR_MEM, NULL);
-		pipex->cmd[i]->args = ft_split_cmd(argv[pipex->cmd_start + i], ' ');
+			error_exit(pipex, 1, ERR_MEM);
+		pipex->cmd[i]->desc = argv[pipex->cmd_start + i];
+		pipex->cmd[i]->args = ft_split_cmd(pipex->cmd[i]->desc, ' ');
 		pipex->cmd[i]->runpath = get_runpath(pipex->paths,
 				pipex->cmd[i]->args[0]);
 		if (!pipex->cmd[i]->runpath)
 			pipex->cmd[i]->status = 127;
-		if (!pipex->cmd[i]->runpath)
-			error(ERR_CMD, argv[pipex->cmd_start + i]);
 	}
 	pipex->cmd[i] = NULL;
 }
@@ -110,7 +109,7 @@ void	pipex_tubing(t_pipex *pipex)
 	i = -1;
 	while (++i < pipex->cmd_number - 1)
 		if (pipe(pipex->pipefds[i]) < 0)
-			free_error_exit(pipex, 1, ERR_PIPE, NULL);
+			error_exit(pipex, 1, ERR_PIPE);
 	i = -1;
 	while (++i < pipex->cmd_number)
 	{
@@ -126,6 +125,8 @@ void	pipex_tubing(t_pipex *pipex)
 		waitpid(pipex->cmd[i]->pid, &pipex->cmd[i]->status, 0);
 		if (WIFEXITED(pipex->cmd[i]->status))
 			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
+		if (pipex->cmd[i]->status != 0)
+			child_error(pipex->cmd[i]);
 	}
 	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }
