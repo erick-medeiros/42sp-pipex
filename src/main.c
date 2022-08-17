@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 11:24:08 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 23:44:48 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 16:08:50 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,22 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 
 	if (argc != 5)
-		arg_error(1, ERR_ARG);
+		arg_error(1);
 	pipex_io(&pipex, argc, argv);
 	pipex_init(&pipex, envp);
 	pipex_commands(&pipex, argv);
 	pipex_tubing(&pipex);
 	free_pipex(&pipex);
 	exit(pipex.exit_status);
+}
+
+void	arg_error(int status)
+{
+	write(STDERR, ERR_ARG, ft_strlen(ERR_ARG));
+	write(STDERR, "\n", 1);
+	write(STDERR, EXAMPLE_CMD1, ft_strlen(EXAMPLE_CMD1));
+	write(STDERR, "\n", 1);
+	exit(status);
 }
 
 void	pipex_io(t_pipex *pipex, int argc, char **argv)

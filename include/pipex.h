@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/17 15:26:36 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 16:09:27 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,14 @@
 # define STDOUT	1
 # define STDERR	2
 
-# define ERR_ARG "invalid number of arguments"
+# define ERR_ARG "invalid arguments"
 # define ERR_PIPE "error on pipe"
 # define ERR_FORK "error on fork"
 # define ERR_CMD "command not found"
 # define ERR_MEM "memory allocation error"
+
 # define PATH_TEMP_FILE "./.tempfilepipex"
+# define EXAMPLE_CMD1 "usage: ./pipex file1 cmd1 cmd2 file2"
 
 enum	e_mode
 {
@@ -84,7 +86,7 @@ void	child_exit_status(t_cmd *cmd);
 // free {
 void	error(int status, char *msg_err);
 void	error_exit(t_pipex *pipex, int status, char *msg_err);
-void	arg_error(int status, char *msg_err);
+void	arg_error(int status);
 void	close_pipes(t_pipex *pipex);
 void	free_pipex(t_pipex *pipex);
 // } free
