@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 22:10:33 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 14:36:31 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,13 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 {
 	char	*runpath;
 
-	if (paths == NULL || ft_strrchr(cmd_exec, '/') != NULL)
+	if (ft_strrchr(cmd_exec, '/') != NULL)
 	{
 		if (access(cmd_exec, F_OK | X_OK) == 0)
 			return (ft_strdup(cmd_exec));
 		return (NULL);
 	}
-	while (*paths)
+	while (paths != NULL && *paths != NULL)
 	{
 		runpath = ft_strjoin(*paths, cmd_exec);
 		if (access(runpath, F_OK | X_OK) == 0)
@@ -76,6 +76,10 @@ static char	*get_runpath(char **paths, char *cmd_exec)
 		free(runpath);
 		paths++;
 	}
+	runpath = ft_strjoin("/usr/bin/", cmd_exec);
+	if (access(runpath, F_OK | X_OK) == 0)
+		return (ft_strdup(runpath));
+	free(runpath);
 	if (access(cmd_exec, F_OK | X_OK) == 0)
 		return (ft_strdup(cmd_exec));
 	return (NULL);
