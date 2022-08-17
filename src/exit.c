@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 21:32:48 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 23:40:00 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,13 @@ void	error_exit(t_pipex *pipex, int status, char *msg_err)
 	write(STDERR, msg_err, ft_strlen(msg_err));
 	write(STDERR, "\n", 1);
 	free_pipex(pipex);
+	exit(status);
+}
+
+void	arg_error(int status, char *msg_err)
+{
+	write(STDERR, msg_err, ft_strlen(msg_err));
+	write(STDERR, "\n", 1);
 	exit(status);
 }
 

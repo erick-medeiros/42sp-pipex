@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 21:33:16 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 23:39:20 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void	child_process(t_pipex *pipex, t_cmd *cmd);
 // free {
 void	error(int status, char *msg_err);
 void	error_exit(t_pipex *pipex, int status, char *msg_err);
+void	arg_error(int status, char *msg_err);
 void	close_pipes(t_pipex *pipex);
 void	free_pipex(t_pipex *pipex);
 // } free
