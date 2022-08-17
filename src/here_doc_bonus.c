@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 10:46:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 20:38:07 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 16:54:26 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	pipex_here_doc(t_pipex *pipex, char	*limiter)
 	int	pid;
 	int	fd;
 
+	fd = -1;
 	if (pipe(pipefd) < 0)
 		error_exit(pipex, 1, MSG_HERE_DOC);
 	pid = fork();
