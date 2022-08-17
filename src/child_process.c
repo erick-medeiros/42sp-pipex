@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 17:17:15 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 13:00:00 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	child_process(t_pipex *pipex, t_cmd *cmd)
 	if (cmd->stdin < 0 || cmd->stdout < 0)
 	{
 		close_pipes(pipex);
-		process_exit(pipex, errno);
+		process_exit(pipex, 1);
 	}
 	dup2(cmd->stdin, STDIN);
 	dup2(cmd->stdout, STDOUT);
