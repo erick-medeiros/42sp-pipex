@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 19:46:17 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 22:10:33 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	pipex_tubing(t_pipex *pipex)
 		if (WIFEXITED(pipex->cmd[i]->status))
 			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
 		if (pipex->cmd[i]->status != 0)
-			child_error(pipex->cmd[i]);
+			error(pipex->cmd[i]->status, pipex->cmd[i]->desc);
 	}
 	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }

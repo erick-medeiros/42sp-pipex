@@ -6,23 +6,23 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/10 15:08:55 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 20:03:16 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/16 21:32:48 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	child_error(t_cmd *cmd)
+void	error(int status, char *desc)
 {
-	if (cmd->status == 127)
+	if (status == 127)
 	{
-		write(STDERR, cmd->desc, ft_strlen(cmd->desc));
+		write(STDERR, desc, ft_strlen(desc));
 		write(STDERR, ": ", 2);
 		write(STDERR, ERR_CMD, ft_strlen(ERR_CMD));
 		write(STDERR, "\n", 1);
 	}
 	else
-		strerror(cmd->status);
+		strerror(status);
 }
 
 void	error_exit(t_pipex *pipex, int status, char *msg_err)
