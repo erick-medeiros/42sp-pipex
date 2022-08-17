@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 16:59:51 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/16 23:39:20 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 15:26:36 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@
 # define STDOUT	1
 # define STDERR	2
 
-# define ERR_INFILE "error on infile"
-# define ERR_OUTFILE "error on outfile"
 # define ERR_ARG "invalid number of arguments"
 # define ERR_PIPE "error on pipe"
 # define ERR_FORK "error on fork"
@@ -80,6 +78,7 @@ void	pipex_tubing(t_pipex *pipex);
 // child_process {
 void	define_stds(t_pipex *pipex, int i);
 void	child_process(t_pipex *pipex, t_cmd *cmd);
+void	child_exit_status(t_cmd *cmd);
 // } child_process
 
 // free {

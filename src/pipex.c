@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 13:38:31 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/17 14:36:31 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 15:22:47 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ void	pipex_tubing(t_pipex *pipex)
 	while (++i < pipex->cmd_number)
 	{
 		pipex->cmd[i]->pid = fork();
+		if (pipex->cmd[i]->pid < 0)
+			error_exit(pipex, 1, ERR_FORK);
 		define_stds(pipex, i);
 		if (pipex->cmd[i]->pid == 0)
 			child_process(pipex, pipex->cmd[i]);
@@ -129,10 +131,7 @@ void	pipex_tubing(t_pipex *pipex)
 	while (++i < pipex->cmd_number)
 	{
 		waitpid(pipex->cmd[i]->pid, &pipex->cmd[i]->status, 0);
-		if (WIFEXITED(pipex->cmd[i]->status))
-			pipex->cmd[i]->status = WEXITSTATUS(pipex->cmd[i]->status);
-		if (pipex->cmd[i]->status != 0)
-			error(pipex->cmd[i]->status, pipex->cmd[i]->desc);
+		child_exit_status(pipex->cmd[i]);
 	}
 	pipex->exit_status = pipex->cmd[pipex->cmd_number - 1]->status;
 }

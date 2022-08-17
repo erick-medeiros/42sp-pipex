@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/11 16:38:37 by eandre-f          #+#    #+#             */
-/*   Updated: 2022/08/17 13:00:00 by eandre-f         ###   ########.fr       */
+/*   Updated: 2022/08/17 15:22:28 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ void	define_stds(t_pipex *pipex, int i)
 		pipex->cmd[i]->stdin = pipex->pipefds[i - 1][0];
 		pipex->cmd[i]->stdout = pipex->pipefds[i][1];
 	}
+}
+
+void	child_exit_status(t_cmd *cmd)
+{
+	if (WIFEXITED(cmd->status))
+		cmd->status = WEXITSTATUS(cmd->status);
+	if (cmd->status != 0)
+		error(cmd->status, cmd->desc);
 }
 
 static void	process_exit(t_pipex *pipex, int status)
