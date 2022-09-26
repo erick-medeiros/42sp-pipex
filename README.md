@@ -26,7 +26,7 @@ make bonus
 
 * Handle two commands
 
-```bash
+```text
 # Program:
 ./pipex file1 cmd1 cmd2 file2
 
@@ -44,7 +44,7 @@ Example:
 
 * Handle multiple pipes
 
-```bash
+```text
 # Program:
 ./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
 
@@ -54,7 +54,7 @@ Example:
 
 * Support « and » when the first parameter is "here_doc"
 
-```bash
+```text
 # Program:
 ./pipex here_doc LIMITER cmd cmd1 file
 
